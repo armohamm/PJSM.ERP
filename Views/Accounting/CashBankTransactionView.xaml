@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="PUJASM.ERP.Views.Accounting.CashBankTransactionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="768" d:DesignWidth="1024">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.125*" />
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="From:" />
+            <DatePicker Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" SelectedDateFormat="Long" SelectedDate="{Binding FromDate}" />
+            <TextBlock Grid.Row="0" Grid.Column="3" Text="To:" />
+            <DatePicker Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" SelectedDateFormat="Long" SelectedDate="{Binding ToDate}" />
+            <TextBlock Grid.Row="0" Grid.Column="6" Text="Cash/Bank:" />
+            <ComboBox Grid.Row="0"  Grid.Column="7" Grid.ColumnSpan="2" ItemsSource="{Binding Banks}" DisplayMemberPath="Name" 
+                      SelectedItem="{Binding SelectedBank, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+        <Border Grid.Row="1" BorderBrush="Blue" BorderThickness="2">
+            <Grid DataContext="{Binding NewEntryVM}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Date:" />
+                <DatePicker Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" SelectedDateFormat="Long" 
+                        SelectedDate="{Binding NewEntryDate}" TabIndex="0" />
+                <TextBlock Grid.Row="0" Grid.Column="3" Text="Account:" />
+                <ComboBox Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" ItemsSource="{Binding Accounts}" DisplayMemberPath="Name" 
+                      SelectedItem="{Binding NewEntryAccount, UpdateSourceTrigger=PropertyChanged}" TabIndex="1" />
+                <TextBlock Grid.Row="0" Grid.Column="6" Text="Amount:" />
+                <TextBox Grid.Row="0" Grid.Column="7" Text="{Binding NewEntryAmount, UpdateSourceTrigger=PropertyChanged, StringFormat=N2}" TabIndex="2" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Description:" />
+                <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Text="{Binding NewEntryDescription, UpdateSourceTrigger=PropertyChanged}" TabIndex="3" />
+                <TextBlock Grid.Row="1" Grid.Column="3" Text="Sequence:" />
+                <ComboBox Grid.Row="1" Grid.Column="4" ItemsSource="{Binding Sequences}" SelectedItem="{Binding NewEntrySequence, UpdateSourceTrigger=PropertyChanged}" 
+                      TabIndex="4" />
+                <Button Grid.Row="0" Grid.Column="8" Content="Confirm" Command="{Binding NewEntryConfirmCommand}" Margin="10" TabIndex="5" />
+                <Button Grid.Row="1" Grid.Column="8"  Content="Cancel" Command="{Binding NewEntryCancelCommand}" Margin="10" />
+            </Grid>
+        </Border>
+        <DataGrid Grid.Row="2" Grid.ColumnSpan="2" ItemsSource="{Binding DisplayLines}" SelectedItem="{Binding SelectedLine}"
+                  IsReadOnly="True">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding DeleteLineCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding LedgerTransaction.ID}" />
+                <DataGridTextColumn Header="Date" Width="1*" Binding="{Binding LedgerTransaction.Date, StringFormat={}{0:dd/MM/yyyy}}" />
+                <DataGridTextColumn Header="Account" Width="1*" Binding="{Binding LedgerAccount.Name}" />
+                <DataGridTextColumn Header="Description" Width="2*" Binding="{Binding LedgerTransaction.Description}" />
+                <DataGridTextColumn Header="Sequence" Width="2*" Binding="{Binding Seq}" />
+                <DataGridTextColumn Header="Amount" Width="1*" Binding="{Binding Amount, StringFormat=N2}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

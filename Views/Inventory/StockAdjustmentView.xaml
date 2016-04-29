@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="PUJASM.ERP.Views.Inventory.StockAdjustmentView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="1024">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
+            <Setter Property="FontSize" Value="20" />
+        </Style>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding  Key="F1"  Command="{Binding SaveTransactionCommand}"/>
+        <KeyBinding  Key="F5"  Command="{Binding NewTransactionCommand}"/>
+    </UserControl.InputBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.125*" />
+            <RowDefinition Height="0.125*" />
+            <RowDefinition Height="0.25*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button Content="(F5) New" Command="{Binding NewTransactionCommand}" />
+            <Button Grid.Column="5" Content="(F1) Save" Command="{Binding SaveTransactionCommand}" IsEnabled="{Binding IsNotEditMode}" />
+        </Grid>
+        <Border BorderBrush="Red" BorderThickness="2" Grid.Row="1" Margin="0, 0, 0, 10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1.5*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Foreground="Blue" Text="ID:" />
+                <TextBox Name="TransactionIDTextBox" Grid.Row="0" Grid.Column="1" Text="{Binding TransactionID, UpdateSourceTrigger=Explicit}"
+                         MaxLength="12" KeyDown="TextBox_KeyDown" />
+                <TextBlock Grid.Row="0"  Grid.Column="2" Foreground="Blue" Text="Description:" />
+                <TextBox  Grid.Row="0" Grid.Column="3" Text="{Binding TransactionDescription, UpdateSourceTrigger=PropertyChanged}" 
+                          MaxLength="100" IsEnabled="{Binding IsNotEditMode}" />
+                <TextBlock Grid.Row="0" Grid.Column="5" Foreground="Blue" Text="Date:" />
+                <DatePicker Grid.Row="0" Grid.Column="6" SelectedDate="{Binding TransactionDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            SelectedDateFormat="Long" IsEnabled="False" />
+            </Grid>
+        </Border>
+        <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="2">
+            <Grid DataContext="{Binding NewEntryVM}" IsEnabled="{Binding IsNotEditMode}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Warehouse:" />
+                <ComboBox Grid.Row="0" Grid.Column="1" ItemsSource="{Binding Warehouses, Mode=OneWay}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding NewEntryWarehouse}" />
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Product ID:" />
+                <ComboBox Grid.Row="0" Grid.Column="3" ItemsSource="{Binding Products, Mode=OneWay}" DisplayMemberPath="ID" 
+                          SelectedItem="{Binding NewEntryProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <TextBlock Grid.Row="0" Grid.Column="4" Text="Product:" />
+                <ComboBox Grid.Row="0" Grid.Column="5" ItemsSource="{Binding Products, Mode=OneWay}" DisplayMemberPath="Name"
+                          SelectedItem="{Binding NewEntryProduct, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Quantity:" />
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding NewEntryQuantity}" />
+                    <TextBlock Grid.Row="0" Grid.Column="1" Foreground="Red" Text="{Binding NewEntryRemainingStock}" />
+                </Grid>
+                <Button Grid.Row="1" Grid.Column="5" Margin="10" Content="Enter" Command="{Binding NewEntryCommand}" />
+            </Grid>
+        </Border>
+        <DataGrid Name="DataGridLines" LoadingRow="DataGrid_LoadingRow" Grid.Row="3" ItemsSource="{Binding DisplayedLines}" 
+                  SelectedItem="{Binding SelectedLine}" IsEnabled="{Binding IsNotEditMode}" IsReadOnly="True" >
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Delete" Command="{Binding DeleteLineCommand}" />
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Warehouse" Width="1*" Binding="{Binding Warehouse.Name}" />
+                <DataGridTextColumn Header="ID" Width="1*" Binding="{Binding Item.ItemID}" />
+                <DataGridTextColumn Header="Name" Width="2*" Binding="{Binding Item.Name}" />
+                <DataGridTextColumn Header="Unit" Width="0.8*" Binding="{Binding Unit}" />
+                <DataGridTextColumn Header="Units" Width="1*" Binding="{Binding Units}" />
+                <DataGridTextColumn Header="Pieces" Width="1*" Binding="{Binding Pieces}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
